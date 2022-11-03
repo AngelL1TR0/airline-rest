@@ -1,4 +1,4 @@
-package entity;
+package org.iesfm.airline.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
