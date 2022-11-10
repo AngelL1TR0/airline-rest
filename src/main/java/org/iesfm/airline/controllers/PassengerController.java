@@ -4,11 +4,11 @@ import org.iesfm.airline.entity.Passenger;
 import org.iesfm.airline.services.FlightService;
 import org.iesfm.airline.services.exceptions.FlightNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,6 +26,24 @@ public class PassengerController {
             return ResponseEntity.ok(flightService.listFlightPassengers(flightId));
         } catch (FlightNotFoundException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping(path = "/flights/{flightId}/passengers/passengerId")
+    public ResponseEntity<Passenger> getPassenger(
+            @PathVariable("passengerId") String passengerId
+    ){
+        Passenger passenger = flightService.listFlightPassengers(passengerId);
+        if (passenger != null){
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @PostMapping(path = "/flights/{flightId}")
+    public ResponseEntity<Void> add(@Valid @RequestBody Passenger passenger){
+        if (){
+
         }
     }
 
