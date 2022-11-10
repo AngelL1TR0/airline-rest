@@ -1,6 +1,8 @@
 package org.iesfm.airline.controllers;
 
 import org.iesfm.airline.entity.Flight;
+import org.iesfm.airline.services.FlightService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,52 +16,46 @@ import java.util.stream.Collectors;
 
 @RestController
 public class FlightController {
-    private Map<String, Flight> flights = new HashMap<>();
+    @Autowired
+    private FlightService flightService;
 
     @GetMapping(path = "/flights")
-    public ResponseEntity <@Valid List<Flight>> list() {
+    public ResponseEntity<List<Flight>> list() {
         return ResponseEntity.ok(
-                flights
-                        .values()
-                        .stream()
-                        .collect(Collectors.toList())
+                flightService.listFlights()
         );
-
     }
 
     @GetMapping(path = "/flights/{flightId}")
-    public ResponseEntity <Flight> getFlight(
+    public ResponseEntity<Flight> getFlight(
             @PathVariable("flightId") String flightId
     ) {
-        if (flights.containsKey(flightId)) {
-            return ResponseEntity.ok( flights.get(flightId));
+        Flight flight = flightService.getFlight(flightId);
+        if (flight != null) {
+            return ResponseEntity.ok(flight);
         } else {
-          return ResponseEntity.notFound().build();
+            //  ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @PostMapping(path = "/flights")
-    public ResponseEntity <Void> add(@Valid @RequestBody Flight flight) {
-        if (flights.containsKey(flight.getId())) {
-             return ResponseEntity.status(
-                    HttpStatus.CONFLICT
-            ).build();
-        } else {
-            flights.put(flight.getId(), flight);
+    public ResponseEntity<Void> add(@Valid @RequestBody Flight flight) {
+        if (flightService.add(flight)) {
             return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
     @PutMapping(path = "/flights/{flightId}")
-    public ResponseEntity <Void> updateFlight(
+    public ResponseEntity<Void> updateFlight(
             @PathVariable("flightId") String flightId,
-            @RequestBody Flight flight
+            @Valid @RequestBody Flight flight
     ) {
         // 3 -> Madrid - Londres
         // 4 -> 1 Madrid - Berlin
-        if (flights.containsKey(flightId)) {
-            flights.remove(flightId);
-            flights.put(flight.getId(), flight);
+        if (flightService.updateFlight(flightId,flight)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
@@ -67,9 +63,8 @@ public class FlightController {
     }
 
     @DeleteMapping(path = "/flights/{flightId}")
-    public ResponseEntity <Void> delete(@PathVariable("flightId") String flightId) {
-        if (flights.containsKey(flightId)) {
-            flights.remove(flightId);
+    public ResponseEntity<Void> delete(@PathVariable("flightId") String flightId) {
+        if (flightService.delete(flightId)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
