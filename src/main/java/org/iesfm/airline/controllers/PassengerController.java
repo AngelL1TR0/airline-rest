@@ -1,5 +1,6 @@
 package org.iesfm.airline.controllers;
 
+import org.iesfm.airline.entity.Flight;
 import org.iesfm.airline.entity.Passenger;
 import org.iesfm.airline.services.FlightService;
 import org.iesfm.airline.services.exceptions.FlightNotFoundException;
@@ -28,11 +29,17 @@ public class PassengerController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping(path = "/flights/{flightId}/passengers/passengerId")
     public ResponseEntity<Passenger> getPassenger(
             @PathVariable("passengerId") String passengerId
     ){
-        Passenger passenger = flightService.listFlightPassengers(passengerId);
+        Passenger passenger = null;
+        try {
+            passenger = (Passenger) flightService.listFlightPassengers(passengerId);
+        } catch (FlightNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         if (passenger != null){
             return ResponseEntity.ok().build();
         } else {
@@ -40,12 +47,19 @@ public class PassengerController {
         }
     }
 
-    @PostMapping(path = "/flights/{flightId}")
-    public ResponseEntity<Void> add(@Valid @RequestBody Passenger passenger){
-        if (){
+    @PostMapping(path = "/flights/{flightId}/passengers")
+    public ResponseEntity<Void> add(
+            @PathVariable("flightId") String flightId,
+            @Valid @RequestBody Passenger passager {
 
-        }
+                try {
+
+                }
     }
 
+    @PutMapping(path = "/flights/{flightId}/passengers/passengerId")
+    public ResponseEntity <Void> updatePassager(){
+
+    }
 }
 

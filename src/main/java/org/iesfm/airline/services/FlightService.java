@@ -1,10 +1,11 @@
 package org.iesfm.airline.services;
 
-import org.iesfm.airline.dao.FlightDAO;
-import org.iesfm.airline.dao.PassengerDAO;
+import org.iesfm.airline.dao.InMemoryFlightDAO;
+import org.iesfm.airline.dao.InMemoryPassengerDAO;
 import org.iesfm.airline.entity.Flight;
 import org.iesfm.airline.entity.Passenger;
 import org.iesfm.airline.services.exceptions.FlightNotFoundException;
+import org.iesfm.airline.services.exceptions.PassengerExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,44 +15,49 @@ import java.util.List;
     public class FlightService {
 
         @Autowired
-        private FlightDAO flightDAO;
+        private InMemoryFlightDAO inMemoryFlightDAO;
 
         @Autowired
-        private PassengerDAO passengerDAO;
+        private InMemoryPassengerDAO inMemoryPassengerDAO;
 
         public List<Flight> listFlights() {
-            return flightDAO.list();
+            return inMemoryFlightDAO.list();
         }
 
         public Flight getFlight(
                 String flightId
         ) {
-            return flightDAO.getFlight(flightId);
+            return inMemoryFlightDAO.getFlight(flightId);
         }
 
         public boolean add(Flight flight) {
-
-            return flightDAO.add(flight);
+            return inMemoryFlightDAO.add(flight);
         }
 
         public boolean updateFlight(
                 String flightId,
                 Flight flight
         ) {
-            return flightDAO.updateFlight(flightId, flight);
+            return inMemoryFlightDAO.updateFlight(flightId, flight);
         }
 
         public boolean delete(String flightId) {
-            return flightDAO.delete(flightId);
+            return inMemoryFlightDAO.delete(flightId);
         }
 
         public List<Passenger> listFlightPassengers(String flightId)
                 throws FlightNotFoundException {
-            if (flightDAO.getFlight(flightId) == null) {
+            if (inMemoryFlightDAO.getFlight(flightId) == null) {
                 throw new FlightNotFoundException(flightId);
             } else {
-                return passengerDAO.listPassengers(flightId);
+                return inMemoryPassengerDAO.listPassengers(flightId);
 
             }
+        }
+
+
+        public boolean addPassanger(String  flightId, Passenger passenger)
+                throws FlightNotFoundException, PassengerExistException {
+            return inMemoryPassengerDAO.addPassenger(flightId, passenger);
         }
     }
