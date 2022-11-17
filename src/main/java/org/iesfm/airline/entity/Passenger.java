@@ -12,17 +12,10 @@ import javax.validation.constraints.*;
 
 public class Passenger {
 
-    @NotBlank
     private String nif;
-    @NotBlank
     private String flightId;
-    @NotBlank
     private String name;
-    @NotBlank
     private String surname;
-    @Email
     private String email;
-    @NotNull
-    @Positive
     private int seatNumber;
 }

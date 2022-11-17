@@ -1,7 +1,7 @@
 package org.iesfm.airline.services;
 
-import org.iesfm.airline.dao.InMemoryFlightDAO;
-import org.iesfm.airline.dao.InMemoryPassengerDAO;
+import org.iesfm.airline.dao.FlightDAO;
+import org.iesfm.airline.dao.PassengerDAO;
 import org.iesfm.airline.entity.Flight;
 import org.iesfm.airline.entity.Passenger;
 import org.iesfm.airline.services.exceptions.FlightNotFoundException;
@@ -11,53 +11,56 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-    @Service
-    public class FlightService {
+@Service
+public class FlightService {
 
-        @Autowired
-        private InMemoryFlightDAO inMemoryFlightDAO;
+    @Autowired
+    private FlightDAO flightDAO;
 
-        @Autowired
-        private InMemoryPassengerDAO inMemoryPassengerDAO;
+    @Autowired
+    private PassengerDAO passengerDAO;
 
-        public List<Flight> listFlights() {
-            return inMemoryFlightDAO.list();
-        }
+    public List<Flight> listFlights() {
+        return flightDAO.list();
+    }
 
-        public Flight getFlight(
-                String flightId
-        ) {
-            return inMemoryFlightDAO.getFlight(flightId);
-        }
+    public Flight getFlight(
+            String flightId
+    ) {
+        return flightDAO.getFlight(flightId);
+    }
 
-        public boolean add(Flight flight) {
-            return inMemoryFlightDAO.add(flight);
-        }
+    public boolean add(Flight flight) {
 
-        public boolean updateFlight(
-                String flightId,
-                Flight flight
-        ) {
-            return inMemoryFlightDAO.updateFlight(flightId, flight);
-        }
+        return flightDAO.add(flight);
+    }
 
-        public boolean delete(String flightId) {
-            return inMemoryFlightDAO.delete(flightId);
-        }
+    public boolean updateFlight(
+            String flightId,
+            Flight flight
+    ) {
+        return flightDAO.updateFlight(flightId, flight);
+    }
 
-        public List<Passenger> listFlightPassengers(String flightId)
-                throws FlightNotFoundException {
-            if (inMemoryFlightDAO.getFlight(flightId) == null) {
-                throw new FlightNotFoundException(flightId);
-            } else {
-                return inMemoryPassengerDAO.listPassengers(flightId);
+    public boolean delete(String flightId) {
+        return flightDAO.delete(flightId);
+    }
 
-            }
-        }
-
-
-        public boolean addPassanger(String  flightId, Passenger passenger)
-                throws FlightNotFoundException, PassengerExistException {
-            return inMemoryPassengerDAO.addPassenger(flightId, passenger);
+    public List<Passenger> listFlightPassengers(String flightId)
+            throws FlightNotFoundException {
+        if (flightDAO.getFlight(flightId) == null) {
+            throw new FlightNotFoundException(flightId);
+        } else {
+            return passengerDAO.listPassengers(flightId);
         }
     }
+
+    public void addPassenger(Passenger passenger)
+            throws FlightNotFoundException, PassengerExistException {
+        if(flightDAO.getFlight(passenger.getFlightId()) == null) {
+            throw new FlightNotFoundException(passenger.getFlightId());
+        } else if (!passengerDAO.addPassenger(passenger)) {
+            throw new PassengerExistException(passenger.getFlightId(), passenger.getNif());
+        }
+    }
+}
