@@ -59,7 +59,7 @@ public class FlightService {
             throws FlightNotFoundException, PassengerExistException {
         if(flightDAO.getFlight(passenger.getFlightId()) == null) {
             throw new FlightNotFoundException(passenger.getFlightId());
-        } else if (!passengerDAO.addPassenger(passenger)) {
+        } else if (!passengerDAO.addPassenger(passenger.getFlightId(), passenger)) {
             throw new PassengerExistException(passenger.getFlightId(), passenger.getNif());
         }
     }
