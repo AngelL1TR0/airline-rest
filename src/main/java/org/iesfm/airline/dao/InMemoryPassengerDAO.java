@@ -46,16 +46,15 @@ public class InMemoryPassengerDAO implements PassengerDAO {
 
     /**
      * Añada un pasajero al vuelo. Devuelve false si el pasajero ya existe en el vuelo
-     * @param flightId
      * @param passenger
      * @return
      */
     @Override
-    public boolean addPassenger(String flightId, Passenger passenger) {
-        if (existPassenger(flightId, passenger.getNif())) {
+    public boolean addPassenger(Passenger passenger) {
+        if (existPassenger(passenger.getFlightId(), passenger.getNif())) {
             return false;
         } else {
-            getFlightPassengers(flightId).put(passenger.getNif(), passenger);
+            getFlightPassengers(passenger.getFlightId()).put(passenger.getNif(), passenger);
             return true;
         }
     }
@@ -63,14 +62,13 @@ public class InMemoryPassengerDAO implements PassengerDAO {
     /**
      * Actualiza los datos de un pasajero en un vuelo. Devuelve false si el
      * pasajero no existe en el vuelo
-     * @param flightNumber
      * @param passenger
      * @return
      */
     @Override
-    public boolean updatePassenger(String flightNumber, Passenger passenger) {
-        if (existPassenger(flightNumber, passenger.getNif())) {
-            getFlightPassengers(flightNumber).put(passenger.getNif(), passenger);
+    public boolean updatePassenger(Passenger passenger) {
+        if (existPassenger(passenger.getFlightId(), passenger.getNif())) {
+            getFlightPassengers(passenger.getFlightId()).put(passenger.getNif(), passenger);
             return true;
         } else {
             return false;
@@ -82,4 +80,3 @@ public class InMemoryPassengerDAO implements PassengerDAO {
         return passengers.get(flightId);
     }
 }
-

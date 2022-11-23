@@ -13,7 +13,7 @@ public interface PassengerDAO {
 
     boolean deletePassenger(String flightId, String nif);
 
-    boolean addPassenger(String flightId, Passenger passenger);
+    boolean addPassenger(Passenger passenger);
 
-    boolean updatePassenger(String flightNumber, Passenger passenger);
+    boolean updatePassenger(Passenger passenger);
 }

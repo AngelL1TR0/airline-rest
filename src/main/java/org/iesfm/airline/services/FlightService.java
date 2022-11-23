@@ -20,8 +20,8 @@ public class FlightService {
     @Autowired
     private PassengerDAO passengerDAO;
 
-    public List<Flight> listFlights() {
-        return flightDAO.list();
+    public List<Flight> listFlights(String origin, String destination) {
+        return flightDAO.list(origin, destination);
     }
 
     public Flight getFlight(
@@ -59,7 +59,7 @@ public class FlightService {
             throws FlightNotFoundException, PassengerExistException {
         if(flightDAO.getFlight(passenger.getFlightId()) == null) {
             throw new FlightNotFoundException(passenger.getFlightId());
-        } else if (!passengerDAO.addPassenger(passenger.getFlightId(), passenger)) {
+        } else if (!passengerDAO.addPassenger(passenger)) {
             throw new PassengerExistException(passenger.getFlightId(), passenger.getNif());
         }
     }

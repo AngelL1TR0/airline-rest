@@ -1,22 +1,25 @@
 package org.iesfm.airline.dao;
 
 import org.iesfm.airline.entity.Flight;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+@Component
 public class InMemoryFlightDAO implements FlightDAO {
 
     private Map<String, Flight> flights = new HashMap<>();
 
     @Override
-    public List<Flight> list() {
+    public List<Flight> list(String origin, String destination) {
         return
                 flights
                         .values()
                         .stream()
+                        .filter(f -> origin == null || origin.equals(f.getOrigin()))
+                        .filter(f -> destination == null || destination.equals(f.getDestination()))
                         .collect(Collectors.toList());
     }
 
